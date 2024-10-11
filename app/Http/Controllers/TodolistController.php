@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TodolistRequest;
+use App\Http\Requests\UpdateTodoRequest;
+use App\Http\Resources\CheckTodoResource;
 use App\Http\Resources\TodolistResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Exception;
@@ -53,6 +55,38 @@ class TodolistController extends Controller
             $todo->saveOrFail();
 
             return $this->getAll();
+        } catch (Exception $e) {
+            $this->errorHandler($e, "Delete Todo Error");
+        }
+    }
+
+    public function checkTodo($id)
+    {
+        try {
+
+            $todo = Todolist::where('id', $id)->first();
+
+            if ($todo == null) {
+                throw new Exception('Todolist Nof Found', 500);
+            }
+
+            $todo->is_check = true;
+            $todo->saveOrFail();
+
+            return new CheckTodoResource($todo);
+        } catch (Exception $e) {
+            $this->errorHandler($e, "Delete Todo Error");
+        }
+    }
+
+    public function updateTodo(UpdateTodoRequest $request): TodolistResource
+    {
+        try {
+            $todo = Todolist::where('id', $request->id)->first();
+            $todo->todo = $request->todo;
+            $todo->saveOrFail();
+
+            return new TodolistResource($todo);
         } catch (Exception $e) {
             $this->errorHandler($e, "Delete Todo Error");
         }
