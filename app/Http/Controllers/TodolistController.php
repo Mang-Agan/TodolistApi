@@ -70,7 +70,7 @@ class TodolistController extends Controller
                 throw new Exception('Todolist Nof Found', 500);
             }
 
-            $todo->is_check = true;
+            $todo->is_check = !$todo->is_check;
             $todo->saveOrFail();
 
             return new CheckTodoResource($todo);
